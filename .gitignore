@@ -1,0 +1,32 @@
+# VSCode specific
+/.idea
+.vscode/*
+!.vscode/thunder-tests/
+!.vscode/thunder-tests/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+.scripts/
+
+# Nix & devenv
+result
+.env
+.env.*
+
+!secrets/.env*
+
+.direnv*
+/.cache
+
+# direnv
+.direnv
+
+.byte/*
+!.byte/conventions
+.byte/cache/*
+.byte/session_context/*

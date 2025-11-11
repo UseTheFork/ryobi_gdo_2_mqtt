@@ -1,0 +1,5 @@
+{
+  "basedpyright.analysis.autoImportCompletions": true,
+  "basedpyright.importStrategy": "useBundled",
+  "basedpyright.analysis.diagnosticMode": "workspace"
+}
