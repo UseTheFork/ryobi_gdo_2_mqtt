@@ -155,8 +155,8 @@ class TestDeviceManagerIntegration:
         light_on_msg = load_fixture(fixtures_dir, "ws_message_1762952732.json")
         await device_manager.handle_device_update("c4be84986d2e", light_on_msg)
 
-        # Verify device state was updated
-        # (In real scenario, this would publish to MQTT)
+        # Cleanup
+        await device.cleanup()
 
 
 class TestCommandFlow:
@@ -180,6 +180,9 @@ class TestCommandFlow:
         mock_websocket = MagicMock()
         mock_websocket.send_message = AsyncMock()
 
+        # Get the current event loop
+        loop = asyncio.get_running_loop()
+
         # Create device
         from ryobi_gdo_2_mqtt.device_manager import RyobiDevice
 
@@ -189,6 +192,7 @@ class TestCommandFlow:
             mqtt_settings=mock_mqtt_settings,
             websocket=mock_websocket,
             api_client=mock_api_client,
+            loop=loop,
         )
 
         # Simulate MQTT door command

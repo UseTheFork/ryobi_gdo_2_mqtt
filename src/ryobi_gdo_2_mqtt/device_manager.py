@@ -1,4 +1,5 @@
 import asyncio
+from concurrent.futures import Future
 
 from ha_mqtt_discoverable import DeviceInfo, Settings as MQTTSettings
 from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo, Cover, CoverInfo, Switch, SwitchInfo
@@ -17,7 +18,15 @@ from ryobi_gdo_2_mqtt.logging import log
 class RyobiDevice:
     """Represents a Ryobi garage door opener with MQTT entities."""
 
-    def __init__(self, device_id: str, device_name: str, mqtt_settings: MQTTSettings.MQTT, websocket, api_client):
+    def __init__(
+        self,
+        device_id: str,
+        device_name: str,
+        mqtt_settings: MQTTSettings.MQTT,
+        websocket,
+        api_client,
+        loop: asyncio.AbstractEventLoop,
+    ):
         """Initialize a Ryobi device with MQTT entities.
 
         Args:
@@ -26,12 +35,15 @@ class RyobiDevice:
             mqtt_settings: MQTT connection settings
             websocket: WebSocket connection for sending commands
             api_client: API client for getting module information
+            loop: Event loop for scheduling coroutines
         """
         self.device_id = device_id
         self.device_name = device_name
         self.websocket = websocket
         self.api_client = api_client
+        self.loop = loop
         self._pending_tasks: set[asyncio.Task] = set()
+        self._pending_futures: set[Future] = set()
 
         # Create HA device info
         self.device_info = DeviceInfo(
@@ -88,24 +100,24 @@ class RyobiDevice:
 
         if payload == DoorCommandPayloads.OPEN:
             self.cover.opening()
-            task = asyncio.create_task(
-                self.websocket.send_message(port_id, module_type, "doorCommand", DoorCommands.OPEN)
+            future = asyncio.run_coroutine_threadsafe(
+                self.websocket.send_message(port_id, module_type, "doorCommand", DoorCommands.OPEN), self.loop
             )
-            self._pending_tasks.add(task)
-            task.add_done_callback(self._pending_tasks.discard)
+            self._pending_futures.add(future)
+            future.add_done_callback(self._pending_futures.discard)
         elif payload == DoorCommandPayloads.CLOSE:
             self.cover.closing()
-            task = asyncio.create_task(
-                self.websocket.send_message(port_id, module_type, "doorCommand", DoorCommands.CLOSE)
+            future = asyncio.run_coroutine_threadsafe(
+                self.websocket.send_message(port_id, module_type, "doorCommand", DoorCommands.CLOSE), self.loop
             )
-            self._pending_tasks.add(task)
-            task.add_done_callback(self._pending_tasks.discard)
+            self._pending_futures.add(future)
+            future.add_done_callback(self._pending_futures.discard)
         elif payload == DoorCommandPayloads.STOP:
-            task = asyncio.create_task(
-                self.websocket.send_message(port_id, module_type, "doorCommand", DoorCommands.STOP)
+            future = asyncio.run_coroutine_threadsafe(
+                self.websocket.send_message(port_id, module_type, "doorCommand", DoorCommands.STOP), self.loop
             )
-            self._pending_tasks.add(task)
-            task.add_done_callback(self._pending_tasks.discard)
+            self._pending_futures.add(future)
+            future.add_done_callback(self._pending_futures.discard)
             self.cover.stopped()
 
     def _handle_light_command(self, client: Client, user_data, message: MQTTMessage):
@@ -122,14 +134,18 @@ class RyobiDevice:
             return
 
         if payload == LightCommandPayloads.ON:
-            task = asyncio.create_task(self.websocket.send_message(port_id, module_type, "lightState", LightStates.ON))
-            self._pending_tasks.add(task)
-            task.add_done_callback(self._pending_tasks.discard)
+            future = asyncio.run_coroutine_threadsafe(
+                self.websocket.send_message(port_id, module_type, "lightState", LightStates.ON), self.loop
+            )
+            self._pending_futures.add(future)
+            future.add_done_callback(self._pending_futures.discard)
             self.light.on()
         elif payload == LightCommandPayloads.OFF:
-            task = asyncio.create_task(self.websocket.send_message(port_id, module_type, "lightState", LightStates.OFF))
-            self._pending_tasks.add(task)
-            task.add_done_callback(self._pending_tasks.discard)
+            future = asyncio.run_coroutine_threadsafe(
+                self.websocket.send_message(port_id, module_type, "lightState", LightStates.OFF), self.loop
+            )
+            self._pending_futures.add(future)
+            future.add_done_callback(self._pending_futures.discard)
             self.light.off()
 
     def update_door_state(self, state: str):
@@ -188,6 +204,12 @@ class RyobiDevice:
             await asyncio.gather(*self._pending_tasks, return_exceptions=True)
         self._pending_tasks.clear()
 
+        # Cancel all pending futures
+        for future in self._pending_futures:
+            if not future.done():
+                future.cancel()
+        self._pending_futures.clear()
+
 
 class DeviceManager:
     """Manages multiple Ryobi devices and their MQTT entities."""
@@ -223,6 +245,9 @@ class DeviceManager:
         if not device_data:
             raise ValueError(f"Failed to get initial state for device: {device_id}")
 
+        # Get current event loop
+        loop = asyncio.get_running_loop()
+
         # Create MQTT device entities
         device = RyobiDevice(
             device_id=device_id,
@@ -230,6 +255,7 @@ class DeviceManager:
             mqtt_settings=self.mqtt_settings,
             websocket=websocket,
             api_client=self.api_client,
+            loop=loop,
         )
         self.devices[device_id] = device
 

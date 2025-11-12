@@ -49,12 +49,17 @@ class TestRyobiDevice:
         self, mock_binary_sensor, mock_switch, mock_cover, mock_mqtt_settings, mock_websocket, mock_api_client
     ):
         """Test device initialization creates all entities."""
+        import asyncio
+
+        loop = asyncio.new_event_loop()
+
         device = RyobiDevice(
             device_id="test_device",
             device_name="Test Device",
             mqtt_settings=mock_mqtt_settings,
             websocket=mock_websocket,
             api_client=mock_api_client,
+            loop=loop,
         )
 
         assert device.device_id == "test_device"
@@ -63,6 +68,8 @@ class TestRyobiDevice:
         assert mock_switch.called
         assert mock_binary_sensor.called
 
+        loop.close()
+
     @patch("ryobi_gdo_2_mqtt.device_manager.Cover")
     @patch("ryobi_gdo_2_mqtt.device_manager.Switch")
     @patch("ryobi_gdo_2_mqtt.device_manager.BinarySensor")
@@ -70,6 +77,10 @@ class TestRyobiDevice:
         self, mock_binary_sensor, mock_switch, mock_cover, mock_mqtt_settings, mock_websocket, mock_api_client
     ):
         """Test updating door state."""
+        import asyncio
+
+        loop = asyncio.new_event_loop()
+
         mock_cover_instance = MagicMock()
         mock_cover.return_value = mock_cover_instance
 
@@ -79,6 +90,7 @@ class TestRyobiDevice:
             mqtt_settings=mock_mqtt_settings,
             websocket=mock_websocket,
             api_client=mock_api_client,
+            loop=loop,
         )
 
         # Reset mock after initialization
@@ -90,6 +102,8 @@ class TestRyobiDevice:
         device.update_door_state("closed")
         mock_cover_instance.closed.assert_called_once()
 
+        loop.close()
+
     @patch("ryobi_gdo_2_mqtt.device_manager.Cover")
     @patch("ryobi_gdo_2_mqtt.device_manager.Switch")
     @patch("ryobi_gdo_2_mqtt.device_manager.BinarySensor")
@@ -97,6 +111,10 @@ class TestRyobiDevice:
         self, mock_binary_sensor, mock_switch, mock_cover, mock_mqtt_settings, mock_websocket, mock_api_client
     ):
         """Test updating light state."""
+        import asyncio
+
+        loop = asyncio.new_event_loop()
+
         mock_switch_instance = MagicMock()
         mock_switch.return_value = mock_switch_instance
 
@@ -106,6 +124,7 @@ class TestRyobiDevice:
             mqtt_settings=mock_mqtt_settings,
             websocket=mock_websocket,
             api_client=mock_api_client,
+            loop=loop,
         )
 
         # Reset mock after initialization
@@ -117,6 +136,8 @@ class TestRyobiDevice:
         device.update_light_state(False)
         mock_switch_instance.off.assert_called_once()
 
+        loop.close()
+
     @patch("ryobi_gdo_2_mqtt.device_manager.Cover")
     @patch("ryobi_gdo_2_mqtt.device_manager.Switch")
     @patch("ryobi_gdo_2_mqtt.device_manager.BinarySensor")
@@ -124,6 +145,10 @@ class TestRyobiDevice:
         self, mock_binary_sensor, mock_switch, mock_cover, mock_mqtt_settings, mock_websocket, mock_api_client
     ):
         """Test updating battery level."""
+        import asyncio
+
+        loop = asyncio.new_event_loop()
+
         mock_battery_instance = MagicMock()
         mock_binary_sensor.return_value = mock_battery_instance
 
@@ -133,6 +158,7 @@ class TestRyobiDevice:
             mqtt_settings=mock_mqtt_settings,
             websocket=mock_websocket,
             api_client=mock_api_client,
+            loop=loop,
         )
 
         # Low battery
@@ -142,6 +168,8 @@ class TestRyobiDevice:
         # Normal battery
         device.update_battery_level(75)
         mock_battery_instance.off.assert_called_once()
+
+        loop.close()
 
 
 class TestDeviceManager:
