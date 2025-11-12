@@ -1,0 +1,14 @@
+{
+  "jsonrpc": "2.0",
+  "method": "wskAttributeUpdateNtfy",
+  "params": {
+    "topic": "c4be84986d2e.wskAttributeUpdateNtfy",
+    "varName": "c4be84986d2e",
+    "garageDoor_7.doorPosition": {
+      "value": 5,
+      "lastValue": 15,
+      "lastSet": 1762952794680
+    }
+  },
+  "id": 0
+}

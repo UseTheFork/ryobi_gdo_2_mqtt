@@ -1,0 +1,14 @@
+{
+  "jsonrpc": "2.0",
+  "method": "wskAttributeUpdateNtfy",
+  "params": {
+    "topic": "c4be84986d2e.wskAttributeUpdateNtfy",
+    "varName": "c4be84986d2e",
+    "garageLight_7.lightState": {
+      "value": true,
+      "lastValue": false,
+      "lastSet": 1762952732888
+    }
+  },
+  "id": 0
+}

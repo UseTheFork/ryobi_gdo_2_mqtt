@@ -1,0 +1,108 @@
+{
+  "result": [
+    {
+      "_id": "690fa46a66a37fe172d1eeaf",
+      "deviceTypeIds": ["gdoMasterUnit"],
+      "activated": 0,
+      "deleted": false,
+      "enabled": true,
+      "varName": "c4be84986d2e",
+      "metaData": {
+        "name": "Acura",
+        "version": 1,
+        "icon": "/img/devices/gdo.png",
+        "description": "RYOBI Connected Garage Door Opener Master Unit",
+        "wskAuthAttempts": [
+          {
+            "varName": "c4be84986d2e",
+            "apiKey": "78e84213c1f1468891233b1",
+            "ts": "2025-11-10 09:02:46",
+            "success": true
+          },
+          {
+            "varName": "c4be84986d2e",
+            "apiKey": "78e84213c1f1468891233b1",
+            "ts": "2025-11-10 09:03:06",
+            "success": true
+          },
+          {
+            "varName": "c4be84986d2e",
+            "apiKey": "78e84213c1f1468891233b1",
+            "ts": "2025-11-11 09:02:36",
+            "success": true
+          },
+          {
+            "varName": "c4be84986d2e",
+            "apiKey": "78e84213c1f1468891233b1",
+            "ts": "2025-11-11 09:03:02",
+            "success": true
+          },
+          {
+            "varName": "c4be84986d2e",
+            "apiKey": "78e84213c1f1468891233b1",
+            "ts": "2025-11-12 09:02:57",
+            "success": true
+          }
+        ],
+        "authCount": 10,
+        "sys": {
+          "lastSeen": 1762952609077
+        },
+        "socketId": "1ecf793a.ip-10-0-1-114.ec2.internal.8080_c4be84986d2e"
+      },
+      "createdDate": "2025-11-08T20:13:30.392Z"
+    },
+    {
+      "_id": "690fa3d4217506809174054e",
+      "deviceTypeIds": ["gdoMasterUnit"],
+      "activated": 0,
+      "deleted": false,
+      "enabled": true,
+      "varName": "d4f513e9a416",
+      "metaData": {
+        "name": "Genesis",
+        "version": 1,
+        "icon": "/img/devices/gdo.png",
+        "description": "RYOBI Connected Garage Door Opener Master Unit",
+        "wskAuthAttempts": [
+          {
+            "varName": "d4f513e9a416",
+            "apiKey": "50ca2f26e1df4edcacca1f7",
+            "ts": "2025-11-10 09:03:10",
+            "success": true
+          },
+          {
+            "varName": "d4f513e9a416",
+            "apiKey": "50ca2f26e1df4edcacca1f7",
+            "ts": "2025-11-11 09:03:50",
+            "success": true
+          },
+          {
+            "varName": "d4f513e9a416",
+            "apiKey": "50ca2f26e1df4edcacca1f7",
+            "ts": "2025-11-11 13:31:02",
+            "success": true
+          },
+          {
+            "varName": "d4f513e9a416",
+            "apiKey": "50ca2f26e1df4edcacca1f7",
+            "ts": "2025-11-12 03:05:00",
+            "success": true
+          },
+          {
+            "varName": "d4f513e9a416",
+            "apiKey": "50ca2f26e1df4edcacca1f7",
+            "ts": "2025-11-12 09:03:14",
+            "success": true
+          }
+        ],
+        "authCount": 9,
+        "sys": {
+          "lastSeen": 1762952448003
+        },
+        "socketId": "63d25b4c.ip-10-0-1-111.ec2.internal.8080_d4f513e9a416"
+      },
+      "createdDate": "2025-11-08T20:11:00.405Z"
+    }
+  ]
+}
