@@ -31,3 +31,7 @@ result
 !.byte/conventions
 .byte/cache/*
 .byte/session_context/*
+
+coverage.xml
+.coverage
+

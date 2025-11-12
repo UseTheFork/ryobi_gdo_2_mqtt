@@ -90,7 +90,39 @@ executionEnvironments = [
     { root = "src" },
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["src/tests"]
+norecursedirs = [".git", "fixtures"]
+log_format = "%(asctime)s.%(msecs)03d %(levelname)-8s %(threadName)s %(name)s:%(filename)s:%(lineno)s %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+asyncio_mode = "auto"
+addopts = [
+    "--cov=ryobi_gdo_2_mqtt",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+
+[tool.coverage.run]
+source = ["src/ryobi_gdo_2_mqtt"]
+omit = ["*/tests/*", "*/__pycache__/*", "*/.venv/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
 
 [build-system]
 requires = ["uv_build>=0.8.10,<0.9.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.0.0",
+]
