@@ -9,6 +9,20 @@ jobs:
     name: Build, Test and Push Docker Image
     runs-on: ubuntu-latest
 
+    # Add MQTT broker as a service
+    services:
+      mosquitto:
+        image: eclipse-mosquitto:latest
+        ports:
+          - 1883:1883
+        volumes:
+          - ${{ github.workspace }}/mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+        options: >-
+          --health-cmd "mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       # 1. Checkout source code
       - name: Checkout source code
@@ -55,16 +69,21 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
       # 7. Run pytest tests
-      # - name: Run pytest tests
-      #   run: |
-      #     docker run --rm \
-      #       --workdir /app \
-      #       --entrypoint "" \
-      #       ${{ steps.meta.outputs.REPO_NAME }}:latest \
-      #       sh -c "uv run pytest"
-      #   env:
-      #     CI: true
-      #   timeout-minutes: 10
+      - name: Run pytest tests
+        run: |
+          docker run --rm \
+            --network host \
+            --workdir /app \
+            --entrypoint "" \
+            -e RYOBI_MQTT_HOST=localhost \
+            -e RYOBI_MQTT_PORT=1883 \
+            -e RYOBI_EMAIL=test@example.com \
+            -e RYOBI_PASSWORD=testpass \
+            ${{ steps.meta.outputs.REPO_NAME }}:latest \
+            sh -c "uv run pytest"
+        env:
+          CI: true
+        timeout-minutes: 10
 
       # 8. Login to Docker Hub
       - name: Log in to Docker Hub
