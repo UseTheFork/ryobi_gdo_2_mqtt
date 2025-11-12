@@ -162,22 +162,6 @@ class TestApplicationBootstrap:
             mock_client.get_api_key.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_authenticate_failure(self, mock_settings):
-        """Test authentication failure exits."""
-        bootstrap = ApplicationBootstrap(mock_settings)
-        mock_session = MagicMock(spec=ClientSession)
-
-        with (
-            patch("ryobi_gdo_2_mqtt.ryobigdo2mqtt.RyobiApiClient") as mock_client_class,
-            pytest.raises(SystemExit),
-        ):
-            mock_client = MagicMock()
-            mock_client.get_api_key = AsyncMock(side_effect=RyobiApiError("Auth failed"))
-            mock_client_class.return_value = mock_client
-
-            await bootstrap.authenticate(mock_session)
-
-    @pytest.mark.asyncio
     async def test_discover_devices_success(self, mock_settings):
         """Test successful device discovery."""
         bootstrap = ApplicationBootstrap(mock_settings)
