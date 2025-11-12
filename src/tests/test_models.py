@@ -1,6 +1,5 @@
 """Tests for data models."""
 
-
 from ryobi_gdo_2_mqtt.models import DeviceData, LoginResponse
 from tests.conftest import load_fixture
 
