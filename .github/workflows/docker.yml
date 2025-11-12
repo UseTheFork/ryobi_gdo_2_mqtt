@@ -73,7 +73,7 @@ jobs:
             -e RYOBI_EMAIL=test@example.com \
             -e RYOBI_PASSWORD=testpass \
             ${{ steps.meta.outputs.REPO_NAME }}:latest \
-            sh -c "uv run pytest"
+            sh -c "uv run --all-groups pytest"
         env:
           CI: true
         timeout-minutes: 10
