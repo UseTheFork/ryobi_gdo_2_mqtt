@@ -26,8 +26,8 @@ via the [Home Assistant MQTT Integration](https://www.home-assistant.io/integrat
 
 ## Usage
 
-- [Running it in Docker](/docs/DOCKER.md) (Coming Soon)
-- [Configuration](/docs/CONFIG.md) (Coming Soon)
+- [Running it in Docker](/docs/DOCKER.md)
+- [Configuration](/docs/CONFIG.md)
 
 ## Requirements
 

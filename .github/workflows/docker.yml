@@ -1,8 +1,8 @@
 name: CI/CD Application with Docker
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published] 
 
 jobs:
   build-test-push:
@@ -41,6 +41,14 @@ jobs:
         run: |
           echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> "$GITHUB_OUTPUT"
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+          # Extract version from tag or use SHORT_SHA as fallback
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION=${GITHUB_SHA::7}
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       # 5. Build Docker image
       - name: Build Docker image
@@ -87,5 +95,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:latest
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:${{ steps.meta.outputs.SHORT_SHA }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:${{ steps.meta.outputs.VERSION}} 
           cache-from: type=local,src=/tmp/.buildx-cache
